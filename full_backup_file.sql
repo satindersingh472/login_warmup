@@ -58,7 +58,7 @@ CREATE TABLE `client_session` (
   PRIMARY KEY (`id`),
   KEY `client_session_FK` (`client_id`),
   CONSTRAINT `client_session_FK` FOREIGN KEY (`client_id`) REFERENCES `client` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -67,7 +67,7 @@ CREATE TABLE `client_session` (
 
 LOCK TABLES `client_session` WRITE;
 /*!40000 ALTER TABLE `client_session` DISABLE KEYS */;
-INSERT INTO `client_session` VALUES (1,'1234566546',1,'2022-10-20 16:26:17'),(2,'354013c41202dfa0c3a213a8d23359abe5d17912',1,'2022-10-20 16:58:23'),(3,'120f5458b4198da42457eff6069184f58bf4e552',1,'2022-10-20 17:01:23');
+INSERT INTO `client_session` VALUES (1,'1234566546',1,'2022-10-20 16:26:17'),(2,'354013c41202dfa0c3a213a8d23359abe5d17912',1,'2022-10-20 16:58:23'),(3,'120f5458b4198da42457eff6069184f58bf4e552',1,'2022-10-20 17:01:23'),(13,'6147cf5b6b92435b952dad3c49d2f429',1,'2022-10-20 18:57:54'),(14,'671cc992c2314394a1d81f731ead11cb',1,'2022-10-20 18:57:55'),(15,'f1ffa62bdfbd494481da306de82d5533',1,'2022-10-20 18:58:35'),(16,'4d959ddb0c484304b4f2a9ae0d4a6992',1,'2022-10-20 18:58:45'),(17,'c6ecb82307b8474d85fd8449762e9eb6',1,'2022-10-20 18:58:51'),(18,'94fb49a7b7af4e108ffb7b014043a64f',1,'2022-10-20 18:58:52'),(19,'a55c72949d674ee58b8a9fd26d691670',1,'2022-10-20 18:58:53'),(20,'db57093de967476d81a09e9a60abda78',1,'2022-10-20 18:58:53'),(21,'e5c07ec338114095bc6bbe8195c8f2d6',1,'2022-10-20 18:58:54'),(22,'0bbb1bc33d4a4920ac531ad8268c3f54',1,'2022-10-20 18:59:01'),(23,'4731d9ee489c4e1c8f1f14ebeffda464',1,'2022-10-20 18:59:02'),(24,'94d4224afb004135858ba44b5e17ca08',1,'2022-10-20 18:59:03'),(25,'e9a9f1ee5ce34212919b8fa25ab8fbc4',1,'2022-10-20 18:59:04');
 /*!40000 ALTER TABLE `client_session` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -84,15 +84,15 @@ UNLOCK TABLES;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'IGNORE_SPACE,STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `add_id_token`(id_input int unsigned, token_input varchar(100))
+CREATE DEFINER=`root`@`localhost` PROCEDURE `add_id_token`(client_id_input int unsigned, token_input varchar(100))
     MODIFIES SQL DATA
 BEGIN
-	insert into client_session(client_id,token)values(id_input,token_input);
+	insert into client_session(client_id,token)values(client_id_input,token_input);
 	commit;
 	SELECT convert(cs.token using utf8)
 	from client_session cs
 	where cs.token = token_input;
-	End ;;
+End ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
@@ -119,6 +119,29 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `login_client` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'IGNORE_SPACE,STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `login_client`(email_input varchar(300), password_input varchar(100), token_input varchar(100))
+    MODIFIES SQL DATA
+BEGIN
+	insert into client_session(client_id,token)
+	select c.id , token_input from client c where c.email = email_input and c.password = password_input;
+	select row_count();
+	commit;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -129,4 +152,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-10-20 17:02:08
+-- Dump completed on 2022-10-20 18:59:51
